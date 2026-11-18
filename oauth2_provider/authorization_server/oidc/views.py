@@ -485,7 +485,10 @@ class RPInitiatedLogoutView(OIDCLogoutOnlyMixin, FormView):
         the IDToken is no longer stored.
         """
         if client_id:
-            return get_application_model().objects.get(client_id=client_id)
+            try:
+                return get_application_model().objects.get(client_id=client_id)
+            except get_application_model().DoesNotExist:
+                raise InvalidOIDCClientError()
         if id_token:
             return id_token.application
         if claims:

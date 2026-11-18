@@ -1070,6 +1070,13 @@ def test_rp_initiated_logout_get_client_id(logged_in_client, oidc_tokens, rp_set
 
 
 @pytest.mark.django_db(databases="__all__")
+def test_rp_initiated_logout_get_unknown_client_id(logged_in_client, rp_settings):
+    rsp = logged_in_client.get(reverse("oauth2_provider:rp-initiated-logout"), data={"client_id": "unknown"})
+    assert rsp.status_code == 400
+    assert is_logged_in(logged_in_client)
+
+
+@pytest.mark.django_db(databases="__all__")
 def test_rp_initiated_logout_post(logged_in_client, oidc_tokens, rp_settings):
     form_data = {
         "client_id": oidc_tokens.application.client_id,
